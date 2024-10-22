@@ -14,6 +14,9 @@
   - [If Terraform needs AWS access, there are different options on supplying the AWS credentials to Terraform. What is order in which Terraform looks up AWS credentials (which ways take precedence/priority)?](#if-terraform-needs-aws-access-there-are-different-options-on-supplying-the-aws-credentials-to-terraform-what-is-order-in-which-terraform-looks-up-aws-credentials-which-ways-take-precedencepriority)
   - [What is best practice to supply AWS credentials? Include: How should AWS credentials never be passed to Terraform?](#what-is-best-practice-to-supply-aws-credentials-include-how-should-aws-credentials-never-be-passed-to-terraform)
   - [Why use Terraform for different environments (e.g. production, testing, etc)](#why-use-terraform-for-different-environments-eg-production-testing-etc)
+- [How to set up environment variables to store AWS access keys on Windows](#how-to-set-up-environment-variables-to-store-aws-access-keys-on-windows)
+  - [Step 1: Open System Environment Variables](#step-1-open-system-environment-variables)
+  - [Step 2: Verify Environment Variables in Git Bash](#step-2-verify-environment-variables-in-git-bash)
 
 # Step 1: Install Terraform on Windows
 
@@ -141,3 +144,47 @@ Orchestration involves coordinating multiple resources, services, and tasks to w
 ## Why use Terraform for different environments (e.g. production, testing, etc)
 
 Terraform enables you to create isolated and consistent environments for development, testing, and production. You can use the same infrastructure code to replicate environments, ensuring that they are identical and reducing the risk of discrepancies between them. This approach also allows for quick and easy testing before deploying changes to production.
+
+
+
+
+# How to set up environment variables to store AWS access keys on Windows
+
+## Step 1: Open System Environment Variables
+1. **Open the Start Menu**:
+
+    - Type **Environment Variables** and click on **Edit the system environment variables**.
+
+2. **Open Environment Variables Window**:
+
+    - In the **System Properties** window, click on **Environment Variables**.
+  
+3. **Add New System Variables**:
+
+    - Under **System variables**, click **New**.
+    - For **Variable Name**, enter **AWS_ACCESS_KEY_ID**.
+    - For **Variable Value**, copy the **Access Key ID** from the CSV file you received and paste it.
+    - Click **OK**.
+
+4. Repeat the Process for **AWS_SECRET_ACCESS_KEY**:
+
+    - Click **New** again.
+    - For **Variable Name**, enter **AWS_SECRET_ACCESS_KEY**.
+    - For **Variable Value**, copy the **Secret Access Key** from the CSV file you received and paste it.
+    - Click **OK**.
+  
+5. **Apply Changes**:
+
+    - Click **OK** to close the **Environment Variables** window.
+    - Click **OK** again to close the **System Properties** window.
+
+## Step 2: Verify Environment Variables in Git Bash
+1. Open a new Git Bash window.
+```bash
+env | grep AWS
+```
+2. Output
+```bash
+AWS_ACCESS_KEY_ID=your-access-key-id
+AWS_SECRET_ACCESS_KEY=your-secret-access-key
+```
