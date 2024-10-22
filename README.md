@@ -5,10 +5,10 @@
 - [Step 3: Install Terraform VSCode Extension](#step-3-install-terraform-vscode-extension)
 - [Step 4: Create a New Folder/Repository for Terraform Documentation](#step-4-create-a-new-folderrepository-for-terraform-documentation)
 - [Terraform](#terraform-1)
-  - [**What is Terraform? What is it Used For?**](#what-is-terraform-what-is-it-used-for)
-  - [**Why Use Terraform? The Benefits?**](#why-use-terraform-the-benefits)
-  - [**Alternatives to Terraform**](#alternatives-to-terraform)
-  - [**Who is Using Terraform in the Industry?**](#who-is-using-terraform-in-the-industry)
+  - [What is Terraform? What is it Used For?](#what-is-terraform-what-is-it-used-for)
+  - [Why Use Terraform? The Benefits?](#why-use-terraform-the-benefits)
+  - [Alternatives to Terraform](#alternatives-to-terraform)
+  - [Who is Using Terraform in the Industry?](#who-is-using-terraform-in-the-industry)
   - [In IaC, What is Orchestration? How Does Terraform Act as "Orchestrator"?](#in-iac-what-is-orchestration-how-does-terraform-act-as-orchestrator)
   - [Best Practice for Supplying AWS Credentials to Terraform](#best-practice-for-supplying-aws-credentials-to-terraform)
   - [If Terraform needs AWS access, there are different options on supplying the AWS credentials to Terraform. What is order in which Terraform looks up AWS credentials (which ways take precedence/priority)?](#if-terraform-needs-aws-access-there-are-different-options-on-supplying-the-aws-credentials-to-terraform-what-is-order-in-which-terraform-looks-up-aws-credentials-which-ways-take-precedencepriority)
@@ -66,9 +66,13 @@
 
 
 # Step 3: Install Terraform VSCode Extension 
-1.**Open VSCode**.
+
+1. **Open VSCode**.
+   
 2. Click on the **Extensions** icon (left sidebar).
+   
 3. Search for **Terraform** (official extension by HashiCorp).
+   
 4. Click **Install**.
 
 
@@ -86,12 +90,12 @@
 
 # Terraform
 
-##  **What is Terraform? What is it Used For?**
+##  What is Terraform? What is it Used For?
 
 Terraform is an open-source infrastructure-as-code (IaC) tool created by HashiCorp. It allows you to define, provision, and manage infrastructure using a simple, declarative configuration language. You can use Terraform to set up cloud resources (e.g., servers, networks, databases) on various cloud providers like AWS, Azure, GCP, and more.
 
 
-## **Why Use Terraform? The Benefits?**
+## Why Use Terraform? The Benefits?
 
    - **Consistency**: Repeatable and consistent deployments.
    - **Scalability**: Easy to scale resources up or down.
@@ -99,14 +103,14 @@ Terraform is an open-source infrastructure-as-code (IaC) tool created by HashiCo
    - **Multi-Cloud**: Support for multiple cloud providers using the same tool.
    - **Automation**: Reduce manual setup and configuration, minimizing errors.
 
-## **Alternatives to Terraform**
+## Alternatives to Terraform
 - AWS CloudFormation
 - Ansible
 - Pulumi
 - Chef
 - Puppet
 
-## **Who is Using Terraform in the Industry?**
+## Who is Using Terraform in the Industry?
 
 - **Netflix**: To manage multi-cloud environments.
 - **Airbnb**: For efficient infrastructure management.
