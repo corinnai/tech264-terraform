@@ -17,6 +17,10 @@
 - [How to set up environment variables to store AWS access keys on Windows](#how-to-set-up-environment-variables-to-store-aws-access-keys-on-windows)
   - [Step 1: Open System Environment Variables](#step-1-open-system-environment-variables)
   - [Step 2: Verify Environment Variables in Git Bash](#step-2-verify-environment-variables-in-git-bash)
+- [Automating with Terraform](#automating-with-terraform)
+  - [Step 1 - in VScode](#step-1---in-vscode)
+  - [Step 2 :](#step-2-)
+  - [Step 3 - In GitBash](#step-3---in-gitbash)
 
 # Step 1: Install Terraform on Windows
 
@@ -45,7 +49,7 @@
 
     - Under **System variables**, find and select **Path**, then click **Edit**.
 
-        ![path](images/path.jpg)
+        ![alt text](images/path.jpg)
 
     - Click **New** and add the path: `D:\Terraform`
 
@@ -104,6 +108,7 @@
    - **Automation**: Reduce manual setup and configuration, minimizing errors.
    - **Declaration** : Declare what you want not what to do 
    - **Cloud agnostic** : Can deploy to any cloud platform because it uses different cloud provider. Each providerr maintains their own plugins (e.g Azure has an Azure plugin in Terraform that will interface with the API of Azure). 
+   - **Easy to use**
 
 ## Alternatives to Terraform
 - AWS CloudFormation
@@ -143,6 +148,18 @@ Orchestration involves coordinating multiple resources, services, and tasks to w
 ## Why use Terraform for different environments (e.g. production, testing, etc)
 
 Terraform enables you to create isolated and consistent environments for development, testing, and production. You can use the same infrastructure code to replicate environments, ensuring that they are identical and reducing the risk of discrepancies between them. This approach also allows for quick and easy testing before deploying changes to production.
+Benefits include:
+- **Consistency** : ensure that all environments are consistent, reducing bugs that arise from manual configuration differences(e.g. testing can be carried out in a consistent environment with matching dependencies to ensure that the  tests in the QA environment run the same in PROD environment, PROD should only differ in scalability)
+- **Separation of concerns** : you can isolate environments to prevent accidenal change in production while testing new features
+- **Version control** : track infrastructure changes in diofferent environemts with version control 
+
+
+
+
+
+Used :
+- testing environment 
+
 
 
 
@@ -187,3 +204,111 @@ env | grep AWS
 AWS_ACCESS_KEY_ID=your-access-key-id
 AWS_SECRET_ACCESS_KEY=your-secret-access-key
 ```
+
+
+# Automating with Terraform 
+
+## Step 1 - in VScode
+1. Create a `.gitignore` :
+```bash
+# locks the provider (plugin assosiated with) version
+# other team members code wont break 
+# doesnt contain sesitive info
+# doesnt need to be gitignored 
+# .terraform.lock.hcl
+
+# doesnt contain sensitive files, just to avoid blot in your remote repos
+.terraform/
+
+
+# most important to protect as they contain credentials 
+# used by Terraform
+terraform.tfstate
+terraform.tfstate.backup
+
+# variables 
+*.tfvars
+*.auto.tfvars
+variable.tf
+
+# override files
+override.tf
+override.tf.json
+```
+**!!!! Important file to ignore !!!!:**
+```bash
+terraform.tfstate
+terraform.tfstate.backup
+```
+
+
+## Step 2 : 
+1. Create a `main.ft` :
+```bash
+# aws_access_key = xxxx MUST NEVER DO THIS
+# aws_secret_key = xxxx MUST NEVER DO THIS
+# syntax often used in HCL is  key = value
+
+# create an ec2 instance
+# where to create - provide the provider
+provider "aws" {
+  # which region to use to create infrastructure
+  region = "eu-west-1"
+}
+# which service/resources to create
+resource "aws_instance" "app_instance" {
+  # which AMI ID ami-0c1c30571d2dae5c9 (for ubuntu 22.04 lts)
+  ami = "ami-0c1c30571d2dae5c9"
+
+  # what type of instance to launch - t2.micro
+  instance_type = "t2.micro"
+
+  # add a public ip to this istance
+  associate_public_ip_address = true
+
+  # name the service/resource we create
+  tags = {
+    Name = "tech264-maria-tf-app-instance"
+  }
+
+}
+```
+## Step 3 - In GitBash
+1.  **Init**
+```bash
+terraform init
+```
+
+![terraform init](<images/terraform init.jpg>)
+
+2. **Plan**
+```bash
+terraform plan
+```
+
+![terrafrom plan](<images/terrafrom plan.jpg>)
+
+3. **Apply**
+```bash
+terraform apply
+```
+
+![terrafrom apply](<images/terrafrom apply.jpg>)
+
+- Is going to create an instance in AWS
+   
+    ![alt text](<images/instance creating.jpg>)
+        
+- AWS instance created :
+
+    ![aws instance](<images/aws instance.jpg>)
+
+
+4. **Destroy** 
+```bash
+terraform destroy
+```
+
+![terraform destroy](<images/terraform destroy.jpg>)
+
+![terrafrom destroy](<images/terraform destroyed.jpg>)
