@@ -86,10 +86,6 @@
     - You can create this on **GitHub** or your preferred Git service.
     - Clone the repository locally and use it to store your Terraform configuration files.
   
-2. **Create Documentation**:
-
-    - Document everything you did to set up Terraform, including commands used, configuration paths, and screenshots if possible.
-
 
 # Terraform
 
