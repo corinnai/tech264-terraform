@@ -21,6 +21,16 @@
   - [Step 1 - in VScode](#step-1---in-vscode)
   - [Step 2 :](#step-2-)
   - [Step 3 - In GitBash](#step-3---in-gitbash)
+- [Create an nsg rules with terraform](#create-an-nsg-rules-with-terraform)
+- [Created an EC2 with NSG](#created-an-ec2-with-nsg)
+- [Research](#research)
+  - [What is pull and push configuration management (IaC)?  Which tools support push/pull?](#what-is-pull-and-push-configuration-management-iac--which-tools-support-pushpull)
+    - [**Pull Configuration Management**](#pull-configuration-management)
+    - [**Push Configuration Management**](#push-configuration-management)
+    - [**Push vs Pull**](#push-vs-pull)
+  - [Does Terraform use the push or pull configuration?](#does-terraform-use-the-push-or-pull-configuration)
+  - [Which is better: push or pull configuration management?](#which-is-better-push-or-pull-configuration-management)
+  - [Include desired state vs current state in your documentation](#include-desired-state-vs-current-state-in-your-documentation)
 
 # Step 1: Install Terraform on Windows
 
@@ -312,3 +322,162 @@ terraform destroy
 ![terraform destroy](<images/terraform destroy.jpg>)
 
 ![terrafrom destroy](<images/terraform destroyed.jpg>)
+
+
+
+
+
+
+
+# Create an nsg rules with terraform
+
+```bash
+# Specify the AWS provider
+provider "aws" {
+    region = "eu-west-1"
+}
+
+# Create a security group named tech264-maria-tf-allow-port-22-3000-80
+resource "aws_security_group" "tech264_maria_tf_sg" {
+  name        = "tech264-maria-tf-allow-port-22-3000-80"
+  description = "Security group allowing ports 22, 3000, and 80"
+
+  # Allow SSH (port 22) from localhost
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["127.0.0.1/32"]
+  }
+
+  # Allow port 3000 from all IP addresses
+  ingress {
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow HTTP (port 80) from all IP addresses
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "tech264-maria-tf-sg"
+  }
+}
+```
+
+# Created an EC2 with NSG
+
+```bash
+# Specify the AWS provider
+provider "aws" {
+    region = "eu-west-1"
+}
+
+# Create an EC2 instance with the specified settings
+resource "aws_instance" "app_instance" {
+  ami             = "ami-0c1c30571d2dae5c9"
+
+  instance_type   = "t2.micro"
+
+  key_name        = "tech264-maria-aws-key"  
+
+  associate_public_ip_address = true
+
+  # Attach the created security group
+  vpc_security_group_ids = ["sg-06e3ea067984c928b"]
+
+  tags = {
+    Name = "tech264-maria-tf-app-instance"
+  }
+}
+```
+
+
+# Research
+
+## What is pull and push configuration management (IaC)?  Which tools support push/pull?
+
+### **Pull Configuration Management**
+- **Definition**: In a pull-based configuration management model, **the nodes (servers, VMs, etc.)** themselves fetch the desired configuration from a central server. Each node is responsible for ensuring that it is configured according to the central configuration by regularly "pulling" the required configuration updates.
+  
+- **Desired State vs. Current State**: The node checks its current state against the desired state defined in the central configuration. If discrepancies are found, the node applies the required changes to match the desired state.
+
+- **Examples of Pull-Based Tools:**
+  - **Puppet**: Nodes (agents) periodically pull the configuration from a Puppet master server.
+  - **Chef**: Chef clients (nodes) pull configuration recipes from a central Chef server.
+  - **SaltStack**: Can work in a pull mode where minions request configuration from the master server.
+  
+- **Benefits**:
+    - Scales well with a large number of nodes, as each node independently fetches its configuration.
+    - Less dependency on the central server since each node manages itself.
+
+- **Challenges**:
+    - Requires agents on each node, which can lead to version control and compatibility issues.
+    - Configuration updates might not be instantaneous, depending on how often nodes pull from the server.
+
+### **Push Configuration Management**
+- **Definition**: In a push-based configuration management model, **the central server pushes configuration updates directly to the nodes.** The central server controls the deployment, ensuring nodes are configured according to the latest changes.
+
+- **Desired State vs. Current State**: The central server pushes configurations that should bring each node to the desired state, checking or enforcing consistency directly.
+
+- **Examples of Push-Based Tools:**
+    - **Ansible**: Uses SSH to push configuration changes directly to nodes.
+    - **SaltStack**: Can also be used in a push mode where the master pushes updates to the minions.
+
+- **Benefits**:
+    - Immediate application of configuration changes, as updates are pushed directly.
+    - No need for agents on nodes (e.g., Ansible uses SSH).
+
+- **Challenges:**
+    - Can be less scalable for a large number of nodes, as the central server handles all the configuration tasks.
+    - The central server must maintain connectivity with all nodes for effective configuration.
+
+### **Push vs Pull**
+- **Push vs. Pull**: Push configuration is better for **direct, fast updates**, while pull configuration is better for **scalable, self-managing nodes**.
+  
+## Does Terraform use the push or pull configuration?
+
+- **Terraform primarily uses a Push-Based Approach**:
+    - When you run `terraform apply`, Terraform **pushes the desired state configuration** directly to the infrastructure provider (e.g., AWS, Azure, Google Cloud).
+
+    - Terraform sends API requests to the cloud provider to create, update, or delete resources to match the desired state specified in the `.tf` files.
+
+    - Terraform ensures **idempotency** by checking the current state of the infrastructure and comparing it to the desired state. It will only push changes if there is a difference.
+
+    - Since there are no agents, Terraform relies on APIs to execute changes, making it a **declarative and agentless push model**.
+  
+## Which is better: push or pull configuration management?
+- **When to Use Pull Configuration**:
+    - Suitable for **large, distributed environments** with many nodes.
+
+    - Preferred when you want **each node to self-manage** and maintain its configuration.
+    
+    - Examples: **Puppet, Chef**.
+  
+- **When to Use Push Configuration:**
+    - Ideal for environments where **instantaneous updates** are required.
+
+    - Useful for **smaller infrastructures or specific tasks** where you want more direct control.
+    
+    - Examples: **Ansible, Terraform**.
+    
+- **Conclusion**:
+    - **Pull-based systems** scale better but may introduce latency in how fast configurations are updated.
+    
+    - **Push-based systems** provide faster configuration updates but might not scale as easily without affecting performance.
+    
+    - The choice depends on **scale, control needs, and the specific requirements** of the infrastructure.
+
+## Include desired state vs current state in your documentation
+- **Desired State**: The ideal configuration that defines how infrastructure or nodes should be set up. For example, defining the number of servers, their configurations, security rules, etc.
+
+- **Current State**: The actual state of the infrastructure at a given moment. This includes the current setup and configurations of all nodes.
+
+- **Reconciliation**: Configuration management tools reconcile the **desired state with the current state**. If differences are found (drift), the tools will make the necessary changes to bring the current state in line with the desired state.
