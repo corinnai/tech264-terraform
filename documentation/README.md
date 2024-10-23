@@ -31,6 +31,13 @@
   - [Does Terraform use the push or pull configuration?](#does-terraform-use-the-push-or-pull-configuration)
   - [Which is better: push or pull configuration management?](#which-is-better-push-or-pull-configuration-management)
   - [Include desired state vs current state in your documentation](#include-desired-state-vs-current-state-in-your-documentation)
+- [Use Terraform to create a repo on GitHub](#use-terraform-to-create-a-repo-on-github)
+  - [Step 1:  Create a Personal Access Token on GitHub](#step-1--create-a-personal-access-token-on-github)
+  - [Step 2: Create Your Terraform Project](#step-2-create-your-terraform-project)
+  - [Step 3 : Write the Terraform Code](#step-3--write-the-terraform-code)
+  - [Step 4: Initialize and Apply Terraform](#step-4-initialize-and-apply-terraform)
+  - [Step 5: Check GitHub](#step-5-check-github)
+  - [Step 6: Push Your Terraform Code to GitHub](#step-6-push-your-terraform-code-to-github)
 
 # Step 1: Install Terraform on Windows
 
@@ -217,6 +224,10 @@ AWS_SECRET_ACCESS_KEY=your-secret-access-key
 
 
 # Automate with Terraform 
+
+![terraform-diag](images/terraform-diag.jpg)
+
+
 
 ## Step 1 - in VScode
 1. Create a `.gitignore` :
@@ -481,3 +492,125 @@ resource "aws_instance" "app_instance" {
 - **Current State**: The actual state of the infrastructure at a given moment. This includes the current setup and configurations of all nodes.
 
 - **Reconciliation**: Configuration management tools reconcile the **desired state with the current state**. If differences are found (drift), the tools will make the necessary changes to bring the current state in line with the desired state.
+
+
+# Use Terraform to create a repo on GitHub
+
+## Step 1:  Create a Personal Access Token on GitHub
+
+1. **Log in to GitHub**.
+2. **Go to Settings > Developer settings > Personal access tokens > Generate new token.**
+
+    ![devsettings](<images/dev settings.jpg>)
+
+    ![token](images/token.jpg)
+
+3. **Name the Token** (e.g., `Terraform Automation`) and select the following permissions:
+- `repo` (this will allow Terraform to create repositories)
+- `delete_repo` (optional, if you want Terraform to delete repos)
+
+4. **Generate Token** and **Copy the Token**. Keep it safe .
+
+## Step 2: Create Your Terraform Project
+
+1. Create a New Directory:
+```bash
+mkdir tech2xx-tf-create-github-repo
+cd tech2xx-tf-create-github-repo
+```
+2. Create the Following Files:
+  
+- `main.tf`: Where your main Terraform code will go.
+- `variables.tf`: To define any variables you will use.
+- `.gitignore`: To ignore any files you don’t want to commit.
+- `terraform.tfvars`: To store your sensitive information securely.
+
+## Step 3 : Write the Terraform Code
+
+1. `main.tf`
+
+```bash
+# Use the GitHub provider
+provider "github" {
+  token = var.github_token  # Terraform will use this token to access GitHub
+}
+
+# Create a GitHub repository
+resource "github_repository" "tech2xx_repo" {
+  name        = "tech2xx-tf-create-github-repo"
+  description = "A public repository created using Terraform"
+  visibility  = "public"  # Can be "private" or "public"
+  
+  has_issues   = true
+  has_projects = true
+  has_wiki     = true
+}
+```
+
+2. `variables.tf`
+
+```bash
+variable "github_token" {
+  description = "The GitHub Personal Access Token for authentication"
+  type        = string
+  sensitive   = true
+}
+```
+3. `.gitignore`
+```bash
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+.terraform.lock.hcl
+*.tfvars 
+```
+4. `terraform.tfvars`
+```bash
+github_token = "your_github_personal_access_token_here"
+```
+**Note**: Do not commit `terraform.tfvars` to GitHub. It contains sensitive information.
+
+## Step 4: Initialize and Apply Terraform
+
+1. **Open Terminal in Your Project Directory**:
+```bash
+terraform init
+```
+
+2. **Run a Terraform Plan:**
+```bash
+terraform plan
+```
+
+3. **Apply the Terraform Code:**
+```bash
+terraform apply
+```
+
+## Step 5: Check GitHub
+
+After running the `terraform apply` command, go to your GitHub account and check if the repository `tech2xx-tf-create-github-repo` has been created.
+
+## Step 6: Push Your Terraform Code to GitHub
+
+1. Initialize a Git Repository:
+```bash
+git init
+git add .
+git commit -m "Initial commit for Terraform GitHub repo automation"
+```
+
+2. Add Your GitHub Repo as Remote and Push
+```bash
+git remote add origin https://github.com/yourusername/tech2xx-tf-create-github-repo.git
+git push -u origin main
+```
+
+3. To exclude .gitignore to not be commited 
+```bash
+git rm --cached .gitignore
+
+git commit -m "Remove .gitignore from repository"
+
+git push origin main
+```
