@@ -17,7 +17,7 @@
 - [How to set up environment variables to store AWS access keys on Windows](#how-to-set-up-environment-variables-to-store-aws-access-keys-on-windows)
   - [Step 1: Open System Environment Variables](#step-1-open-system-environment-variables)
   - [Step 2: Verify Environment Variables in Git Bash](#step-2-verify-environment-variables-in-git-bash)
-- [Automating with Terraform](#automating-with-terraform)
+- [Automate with Terraform](#automate-with-terraform)
   - [Step 1 - in VScode](#step-1---in-vscode)
   - [Step 2 :](#step-2-)
   - [Step 3 - In GitBash](#step-3---in-gitbash)
@@ -216,7 +216,7 @@ AWS_SECRET_ACCESS_KEY=your-secret-access-key
 ```
 
 
-# Automating with Terraform 
+# Automate with Terraform 
 
 ## Step 1 - in VScode
 1. Create a `.gitignore` :
@@ -347,7 +347,7 @@ resource "aws_security_group" "tech264_maria_tf_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["127.0.0.1/32"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   # Allow port 3000 from all IP addresses
